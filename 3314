@@ -1,17 +1,24 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 
-int P = 2; 
-float x[3], b[3]; 
-float y[3]; 
+int N, P = 2;
+float *x, *y, b[3];
 
-void inputData ()
+int inputData ()
 { 
-	printf ("\nVvod vhodnogo signala\n");
-	for (int i = 0; i <= P; i ++) 
+	printf ("Vvedite kolichestvo poslednih otschetov signala: N = ");
+	scanf ("%d", &N); 
+	if (N <= 2) 
 	{ 
-		printf ("x[n - %d] = ", i);
+		printf ("ploho, N <= 2\n");
+		return 1; 
+	}
+	x = (float *)malloc(N * sizeof(float)); 
+	y = (float *)malloc(N * sizeof(float)); 
+	printf ("\nVvod vhodnogo signala\n");
+	for (int i = 0; i < N; i ++) 
+	{ 
+		printf ("x[%d] = ", i);
 		scanf ("%f", &x[i]);
 	}
 	printf ("\nVvod coefficientov usileniya\n");
@@ -20,28 +27,32 @@ void inputData ()
 		printf ("b%d = ", i);
 		scanf ("%f", &b[i]);
 	}
+	return 0;
 }
 
-void calcY () 
+float calcY (int n) 
 { 
 	float tempY = 0.0;
 	for (int i = 0; i <= P; i ++) 
-	{ 
-		tempY += b[i] * x[i];
-		y[i] = tempY;
+	{
+		tempY += b[i] * x[n - i];
 	}
+	return tempY;
 }
 
-int main() 
+int main()
 {
-	inputData(); 
-	calcY();
-	printf ("\nVihodnoy signal:\n");
-	for (int i = 0; i <= P; i ++) 
+	if (inputData() == 0) 
 	{ 
-		printf ("Y[%d] = %f\n", i, y[i]);
+		for (int n = 2; n < N; n ++)
+		{
+			y[n] = calcY(n); 
+			printf ("\nVihodnoy signal Y[%d] = %f\n", n, y[n]); 
+		}
+		free (x); 
+		free (y); 
 	}
-	system ("pause"); 
+	system ("pause");
 	return 0;
 }
 
